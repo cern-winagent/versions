@@ -16,6 +16,7 @@ namespace versions
         {
             var versions = new Models.VersionsMessage
             {
+                HostName = System.Environment.MachineName,
                 Agent = GetAgentVersion(),
                 AutoUpdater = GetAutoUpdaterVersion(),
                 Plugin = GetPluginVersion(),
