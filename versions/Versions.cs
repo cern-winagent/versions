@@ -6,11 +6,13 @@ using plugin;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
+using System.Linq;
 
 namespace versions
 {
     [PluginAttribute(PluginName = "Versions")]
-    public class IHeartbeat : IInputPlugin
+    public class IVersions : IInputPlugin
     {
         public string Execute(JObject settings)
         {
@@ -52,10 +54,15 @@ namespace versions
             var plugins = new JObject();
             try
             {
-                foreach (String plugin in Directory.GetFiles("plugins"))
+                var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                .Where(assembly => (assembly.GetTypes()
+                    .Select(type => type.IsDefined(typeof(PluginAttribute), false))
+                    .FirstOrDefault()
+                ));
+
+                foreach (Assembly plugin in assemblies)
                 {
-                    FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(String.Format(plugin));
-                    plugins[Path.GetFileNameWithoutExtension(plugin)] = versionInfo.FileVersion;
+                    plugins[plugin.GetName().Name] = plugin.GetName().Version.ToString();
                 }
             }
             catch (Exception)
