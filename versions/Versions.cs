@@ -54,11 +54,12 @@ namespace versions
             var plugins = new JObject();
             try
             {
-                var assemblies = AppDomain.CurrentDomain.GetAssemblies()
+                // Get the assemblies which have at least(t>0) one type that defines PluginAttribute
+                IEnumerable<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(assembly => (assembly.GetTypes()
-                    .Select(type => type.IsDefined(typeof(PluginAttribute), false))
-                    .FirstOrDefault()
-                ));
+                    .Where(type => type.IsDefined(typeof(PluginAttribute), false) == true)).Count() > 0
+                );
+
 
                 foreach (Assembly plugin in assemblies)
                 {
