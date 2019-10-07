@@ -14,6 +14,8 @@ namespace versions
     [PluginAttribute(PluginName = "Versions")]
     public class IVersions : IInputPlugin
     {
+        public event EventHandler<MessageEventArgs> MessageEvent;
+
         public string Execute(JObject settings)
         {
             var versions = new Models.VersionsMessage
